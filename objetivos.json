@@ -1,0 +1,16 @@
+// data/objetivos.json
+{
+  "api_handler": {
+    "objetivo": "Obtener datos de la API",
+    "acciones": [
+      {
+        "tipo": "GET",
+        "url": "https://jsonplaceholder.typicode.com/todos/1"
+      }
+    ]
+  },
+  "task_scheduler": {
+    "objetivo": "Programar tareas a intervalos",
+    "acciones": []
+  }
+}
