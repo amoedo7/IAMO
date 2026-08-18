@@ -1,0 +1,14 @@
+{
+  "schema": "desarrollamo.project.v1",
+  "repository": "amoedo7/IAMO",
+  "name": "IAMO",
+  "ecosystem": "DesarrollAMO",
+  "type": "ai-interface-prototype",
+  "lifecycle": "historical-concept",
+  "visibility": "public",
+  "source_of_truth": false,
+  "production_url": null,
+  "related": ["amoedo7/AutoDesarrollAMO", "amoedo7/Armacabeza"],
+  "reviewed_at": "2026-08-18",
+  "notes": ["Historical implementation of IAMO ideas.", "IAMO concept remains relevant but this repository is not the modern system implementation."]
+}
