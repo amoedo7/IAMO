@@ -1,0 +1,17 @@
+[Unit]
+Description=IAMO Core - DesarrollAMO root operational agent
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/IAMO
+Environment=PYTHONUNBUFFERED=1
+Environment=IAMOX_ROOT=%h/IAMOX
+ExecStart=/usr/bin/python3 main.py serve --interval 300
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
