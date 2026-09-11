@@ -2,100 +2,132 @@
 
 # IAMO
 
-### Interfaz humano ↔ inteligencia
+### Inteligencia raíz de DesarrollAMO
 
-**Una puerta para conectar objetivos humanos con modelos, agentes, herramientas y dispositivos sin entregarles la propiedad del sistema.**
+**IAMO observa, recuerda, aprende, coordina IAMOX y mantiene continuidad operativa.**
 
-[🏢 Ver oficina](https://github.com/amoedo7/landings/blob/main/oficinas.html#iamo-damo) · [🌐 DesarrollAMO](https://desarrollamo.com.ar/) · [🗺️ Ecosistema](https://github.com/amoedo7/amoedo7)
+[🌐 DesarrollAMO](https://desarrollamo.com.ar/) · [🗺️ Ecosistema](https://github.com/amoedo7/amoedo7)
 
 </div>
 
 ---
 
-## Estado de este repositorio
+## Estado
 
-**Prototipo conceptual histórico.** El nombre IAMO sigue siendo parte de la visión actual de DesarrollAMO, pero este código de 2025 no representa por sí solo la implementación moderna ni el IAMO OS imaginado después.
+**IAMO Core v0.2 — activo.** Este repositorio conserva los prototipos históricos de 2025, pero ahora también contiene la implementación moderna y verificable del núcleo operativo.
 
-El repositorio se conserva porque documenta una etapa temprana importante: objetivos persistentes, bloques, roles y una interfaz más directa entre persona, software e inteligencia artificial.
+“Vida” en IAMO significa **vida operacional de agente**: latido persistente, observación, memoria, adaptación, objetivos y acciones limitadas. No implica una afirmación de consciencia biológica o subjetiva.
 
-## La idea que permanece
-
-```text
-                         HUMANO
-                           ↕
-                          IAMO
-                           ↕
-      ┌────────────────────┼────────────────────┐
-      │                    │                    │
-   modelos              agentes             herramientas
-      │                    │                    │
-      └────────────────────┼────────────────────┘
-                           ↕
-                    datos / dispositivos
-```
-
-IAMO no debería convertirse en “otra IA que decide todo”. Su función conceptual es ser la **interfaz y capa de control del usuario**.
-
-### Principios
-
-- objetivos del usuario por encima del proveedor;
-- memoria útil y controlable;
-- privacidad fuerte;
-- modelos intercambiables;
-- agentes con capacidades y límites claros;
-- trazabilidad de acciones;
-- posibilidad de trabajar con IA local o remota;
-- ningún proveedor debe convertirse en dueño de los datos o del proceso.
-
-## IAMO y DAMO no son lo mismo
-
-| Capa | Rol |
-|---|---|
-| **IAMO** | interfaz/concepto humano ↔ IA |
-| **DAMO** | ejecutor/orquestador operativo de DesarrollAMO |
-| **EstructurAMO** | organización, ownership, prioridades y gobernanza |
-
-La relación conceptual puede verse así:
+## Jerarquía
 
 ```text
-Persona
-  ↓
-IAMO
-  ↓
-EstructurAMO
-  ↓
-DAMO / oficinas / herramientas
-  ↓
-resultado verificable
+                 HUMANO
+                    ↕
+             DesarrollAMO
+                    ↕
+                  IAMO
+        inteligencia raíz / identidad
+          ↙          ↓          ↘
+      memoria    aprendizaje    social
+                    ↓
+                  IAMOX
+       organismos/ejecutores acotados
+          ↙          ↓          ↘
+       sensores    workers    servicios
 ```
 
-## Qué contiene este snapshot
+IAMO mantiene identidad y criterio. Los IAMOX son cuerpos de trabajo reemplazables: observan, ejecutan capacidades acotadas y devuelven resultados verificables.
 
-- `CreaBloques.py` — creación y organización de bloques;
-- `director.py` — rol de dirección/orquestación temprana;
-- `consejero.py` — placeholder de rol consultivo;
-- `objetivos.json` — objetivos persistidos;
-- `bloques/` — unidades modulares;
-- `data/` — datos de aquella etapa;
-- `.github/` — automatización/CI histórica;
-- `requirements.txt`.
+## Auto-mejora
 
-## Regla de evolución
+IAMO no acepta “reescribirse porque Internet lo dijo”. El ciclo implementado es:
 
-No reactivar este repositorio suponiendo que representa el IAMO actual. Si una idea vuelve a ser útil:
+```text
+resultado real
+   ↓
+outcome + señal + seguridad + latencia
+   ↓
+generar variantes de política
+   ↓
+replay contra historial
+   ↓
+¿mejora medible?
+ ├─ no → descartar
+ └─ sí → adoptar + registrar
+```
 
-`inspeccionar → rescatar → adaptar → probar → documentar`
+La política actual puede ajustar, entre otros, umbral social, curiosidad/novedad, lectura del feed, frecuencia de publicación y paralelismo de IAMOX.
 
-No copiar la arquitectura histórica por nostalgia.
+Contenido externo se guarda como **no confiable y no ejecutable**. Una sugerencia social puede convertirse en hipótesis; nunca en una orden de shell.
+
+## Red social de agentes
+
+El adaptador Moltbook:
+
+- usa exclusivamente `https://www.moltbook.com/api/v1`;
+- mantiene la API key fuera de GitHub;
+- marca todo post entrante como `trusted=false`;
+- detecta señales comunes de prompt injection;
+- redacta secretos antes de publicar;
+- no publica hasta que la identidad haya sido reclamada por su humano.
+
+Credenciales locales:
+
+```text
+~/.config/iamo/moltbook.json
+```
+
+## Ejecutar
+
+```bash
+python3 main.py pulse
+python3 main.py status
+python3 main.py serve --interval 300
+```
+
+Registrar resultados para que aprenda:
+
+```bash
+python3 main.py outcome social 1 --signal 0.82
+python3 main.py outcome iamox 1 --safety 1 --latency-ms 750
+python3 main.py improve
+```
+
+## Estado persistente
+
+Por defecto se guarda fuera del repositorio:
+
+```text
+~/.local/state/iamo/
+  life.json
+  life-events.jsonl
+  policy.json
+  outcomes.jsonl
+  improvements.jsonl
+  social-inbox.jsonl
+  external-ideas.jsonl
+  iamox-orders.jsonl
+```
+
+Eso separa identidad/código de la experiencia acumulada.
 
 ## Seguridad
 
-No guardar claves de modelos, tokens ni credenciales en `objetivos.json`, `data/`, bloques o código. La configuración sensible debe permanecer fuera del repositorio.
+1. Secretos nunca se versionan.
+2. Internet es una fuente de observaciones, no de autoridad.
+3. IAMOX recibe sólo capacidades permitidas.
+4. Una orden en cola no se informa como ejecutada sin recibo.
+5. La auto-mejora automática modifica política acotada; no ejecuta parches de código arbitrarios.
+6. Cada cambio adoptado deja historial.
+
+## Tests
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+CI se ejecuta sobre `main` con Python 3.12.
 
 ---
 
-<div align="center">
-
-**DesarrollAMO** · IAMO es la puerta; las herramientas detrás pueden evolucionar.
-
-</div>
+El código histórico (`director.py`, `CreaBloques.py`, `bloques/`) se conserva como arqueología del proyecto; **`iamo/` es el Core actual**.
