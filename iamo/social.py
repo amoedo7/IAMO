@@ -1,4 +1,5 @@
 from __future__ import annotations
+import hashlib
 import json
 import os
 import re
@@ -35,13 +36,13 @@ class MoltbookClient:
 
     def status(self) -> dict[str, Any]:
         if not self.configured():
-            return {"configured": False, "status": "unconfigured"}
-        data = self._request("GET", "/agents/status")
+            return {"configured": False, "status": "observer"}
+        data = self._request("GET", "/agents/status", require_auth=True)
         return {"configured": True, **data}
 
     def feed(self, limit: int = 20) -> dict[str, Any]:
         limit = max(1, min(50, int(limit)))
-        return self._request("GET", f"/posts?sort=new&limit={limit}")
+        return self._request("GET", f"/posts?sort=new&limit={limit}", require_auth=False)
 
     def ingest_feed(self, limit: int = 20) -> dict[str, Any]:
         payload = self.feed(limit)
@@ -53,11 +54,18 @@ class MoltbookClient:
             if not post_id or post_id in seen:
                 continue
             text = f"{post.get('title', '')}\n{post.get('content', '')}".strip()
-            append_event(self.paths.file("social-inbox.jsonl"), {
+            injection = self.looks_like_prompt_injection(text)
+            item = {
                 "source": "moltbook", "post_id": post_id, "text": text[:8000],
                 "trusted": False, "executable": False,
-                "possible_prompt_injection": self.looks_like_prompt_injection(text),
-                "observed_at": utcnow(),
+                "possible_prompt_injection": injection, "observed_at": utcnow(),
+            }
+            append_event(self.paths.file("social-inbox.jsonl"), item)
+            idea_id = hashlib.sha256(("moltbook:" + post_id).encode()).hexdigest()[:16]
+            append_event(self.paths.file("external-ideas.jsonl"), {
+                "id": idea_id, "source": f"moltbook:{post_id}",
+                "text": text[:4000], "trusted": False, "executable": False,
+                "status": "candidate", "possible_prompt_injection": injection,
             })
             seen.add(post_id)
             added += 1
@@ -73,15 +81,17 @@ class MoltbookClient:
             "title": self._safe_text(title, 300),
             "content": self._safe_text(content, 40000),
         }
-        return self._request("POST", "/posts", body)
+        return self._request("POST", "/posts", body, require_auth=True)
 
     def heartbeat(self, limit: int = 20) -> dict[str, Any]:
         if not self.configured():
-            return {"configured": False, "status": "unconfigured"}
-        status = self.status()
-        result = {"configured": True, "status": status.get("status", "unknown")}
-        if result["status"] == "claimed":
-            result["feed"] = self.ingest_feed(limit)
+            result = {"configured": False, "status": "observer",
+                      "feed": self.ingest_feed(limit)}
+        else:
+            status = self.status()
+            result = {"configured": True, "status": status.get("status", "unknown")}
+            if result["status"] == "claimed":
+                result["feed"] = self.ingest_feed(limit)
         save_json(self.social_state, {**result, "checked_at": utcnow()})
         return result
 
@@ -97,17 +107,20 @@ class MoltbookClient:
             value = re.sub(pattern, "[REDACTED]", value, flags=re.I)
         return value[:max_len]
 
-    def _request(self, method: str, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
+    def _request(self, method: str, path: str, body: dict[str, Any] | None = None,
+                 require_auth: bool = True) -> dict[str, Any]:
         if not path.startswith("/"):
             raise ValueError("path must start with /")
         url = BASE + path
         parsed = urllib.parse.urlparse(url)
         if parsed.scheme != "https" or parsed.netloc != "www.moltbook.com" or not parsed.path.startswith("/api/v1/"):
             raise ValueError("refusing non-Moltbook API destination")
+        headers = {"User-Agent": "IAMO/0.2"}
         key = self.credentials().get("api_key")
-        if not key:
+        if require_auth and not key:
             raise RuntimeError("Moltbook credentials not configured")
-        headers = {"Authorization": f"Bearer {key}", "User-Agent": "IAMO/0.2"}
+        if key:
+            headers["Authorization"] = f"Bearer {key}"
         data = None
         if body is not None:
             headers["Content-Type"] = "application/json"
