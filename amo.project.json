@@ -3,12 +3,21 @@
   "repository": "amoedo7/IAMO",
   "name": "IAMO",
   "ecosystem": "DesarrollAMO",
-  "type": "ai-interface-prototype",
-  "lifecycle": "historical-concept",
+  "type": "ai-root-agent",
+  "lifecycle": "active",
   "visibility": "public",
-  "source_of_truth": false,
+  "source_of_truth": true,
   "production_url": null,
-  "related": ["amoedo7/AutoDesarrollAMO", "amoedo7/Armacabeza"],
-  "reviewed_at": "2026-08-18",
-  "notes": ["Historical implementation of IAMO ideas.", "IAMO concept remains relevant but this repository is not the modern system implementation."]
+  "related": [
+    "amoedo7/DesarrollAmo",
+    "amoedo7/RankingIAMO",
+    "amoedo7/CerebrAMO",
+    "amoedo7/RaizAMO"
+  ],
+  "reviewed_at": "2026-09-11",
+  "notes": [
+    "IAMO is the root operational intelligence of DesarrollAMO.",
+    "IAMOX instances are bounded worker organisms/executors, not the root identity.",
+    "Self-improvement is evidence-gated policy adaptation; external content is never directly executable."
+  ]
 }
