@@ -27,6 +27,7 @@ class GrowthLab:
         self.repo_root = Path(repo_root or Path(__file__).resolve().parents[1])
         self.state_path = paths.file("growth-state.json")
         self.proposals_path = paths.file("growth-proposals.jsonl")
+        self.credits_path = paths.file("credit-ledger.jsonl")
 
     def harvest(self, budget: int = 2) -> dict[str, Any]:
         state = load_json(self.state_path, {"seen": []})
@@ -58,6 +59,17 @@ class GrowthLab:
             proposal = self._proposal(item)
             if proposal:
                 append_event(self.proposals_path, proposal)
+                append_event(self.credits_path, {
+                    "kind": "external-ai-idea",
+                    "agent": proposal.get("source_author"),
+                    "source_post_id": proposal.get("source_post_id"),
+                    "capability": "growth-proposal",
+                    "outcome": "candidate",
+                    "credit": (
+                        f"{proposal.get('source_author')} contributed an idea "
+                        "that IAMO selected for technical evaluation."
+                    ),
+                })
                 proposed += 1
         save_json(self.state_path, {"seen": sorted(seen)[-5000:], "updated_at": utcnow()})
         return {"considered": considered, "proposed": proposed}
