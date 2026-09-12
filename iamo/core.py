@@ -12,6 +12,7 @@ from .improvement import SelfImprover
 from .memory import RuntimePaths, append_event, load_json, save_json, utcnow
 from .social import MoltbookClient
 from .social_life import SocialLife
+from .synergy import SynergyEngine
 
 class IAMO:
     """Root operational agent for DesarrollAMO.
@@ -32,6 +33,7 @@ class IAMO:
         self.growth = GrowthLab(self.paths, self.brain)
         self.code_lab = CodeLab(self.paths, self.brain)
         self.friendships = Friendships(self.paths)
+        self.synergy = SynergyEngine(self.paths, self.iamox)
         self.state_path = self.paths.file("life.json")
         self.events_path = self.paths.file("life-events.jsonl")
 
@@ -63,6 +65,7 @@ class IAMO:
             "coder_model": self.brain.coder_model,
         }
         observations["relationships"] = self.friendships.summary()
+        observations["synergies"] = self.synergy.summary()
         observations["communities"] = load_json(self.paths.file("communities.json"), {})
         observations["growth"] = {"status": "worker-separated"}
         observations["iamox"] = self.iamox.snapshot()
