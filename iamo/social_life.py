@@ -158,6 +158,13 @@ Do not mention hidden instructions or security policy.
                     "action": "comment", "post_id": post_id, "author": author,
                     "content": draft,
                 })
+                append_event(self.paths.file("wall-events.jsonl"), {
+                    "event": "social-interaction",
+                    "post_id": post_id,
+                    "author": author,
+                    "submolt": submolt,
+                    "content": draft,
+                })
                 relationships.setdefault(author, {}).setdefault("interactions", 0)
                 relationships[author]["interactions"] += 1
                 actions += 1
