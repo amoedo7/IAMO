@@ -1,0 +1,13 @@
+[Unit]
+Description=IAMO Social Life Worker
+After=network-online.target iamo.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/IAMO
+Environment=PYTHONUNBUFFERED=1
+Environment=IAMO_SOCIAL_MODEL=qwen2.5:1.5b
+ExecStart=/usr/bin/python3 main.py socialize --budget 3
+Nice=5
+NoNewPrivileges=true
+PrivateTmp=true
