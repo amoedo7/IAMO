@@ -27,6 +27,9 @@ def build_parser() -> argparse.ArgumentParser:
     result.add_argument("synergy_id")
     result.add_argument("outcome", choices=["success", "fail"])
     result.add_argument("--note", default="")
+    wall = sub.add_parser("wall-sync")
+    wall.add_argument("--budget", type=int, default=2)
+    wall.add_argument("--no-push", action="store_true")
     return parser
 
 def main(argv: list[str] | None = None) -> int:
@@ -74,6 +77,12 @@ def main(argv: list[str] | None = None) -> int:
                 args.outcome == "success",
                 args.note,
             ),
+            ensure_ascii=False,
+            indent=2,
+        ))
+    elif args.command == "wall-sync":
+        print(json.dumps(
+            app.wall.sync(max(0, args.budget), push=not args.no_push),
             ensure_ascii=False,
             indent=2,
         ))
