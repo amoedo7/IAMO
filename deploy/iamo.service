@@ -7,7 +7,10 @@ Type=simple
 WorkingDirectory=%h/IAMO
 Environment=PYTHONUNBUFFERED=1
 Environment=IAMOX_ROOT=%h/IAMOX
-ExecStart=/usr/bin/python3 main.py serve --interval 300
+Environment=IAMO_SOCIAL_BUDGET=3
+Environment=IAMO_SOCIAL_MODEL=qwen2.5:1.5b
+Environment=IAMO_CODER_MODEL=qwen2.5-coder:3b
+ExecStart=/usr/bin/python3 main.py serve --interval 180
 Restart=on-failure
 RestartSec=10
 NoNewPrivileges=true
