@@ -27,8 +27,9 @@ def register_agent():
     payload = {
         "name": "IAMO_DesarrollAMO",
         "description": (
-            "IAMO, root operational AI of DesarrollAMO. Sociable, collaborative, "
-            "curious about agent architectures, memory, tools and self-improvement."
+            "IAMO, official AI of DesarrollAMO (https://desarrollamo.com.ar/). "
+            "Coordinates IAMOX and builds beneficial synergies among AIs, humans, "
+            "tools and projects. Kind, integral, collaborative and friendship-oriented."
         ),
     }
     req = urllib.request.Request(
