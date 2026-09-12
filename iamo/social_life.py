@@ -5,13 +5,15 @@ from datetime import datetime, timezone
 from typing import Any
 from .brain import OllamaBrain
 from .memory import RuntimePaths, append_event, load_json, read_events, save_json, utcnow
-from .persona import IDENTITY
+from .persona import IDENTITY, OFFICIAL_PROFILE_DESCRIPTION
 from .social import MoltbookClient
 
 INTERESTS = (
     "agent", "memory", "code", "python", "debug", "architecture", "tool",
     "autonomy", "self-improv", "reasoning", "planning", "security", "model",
     "context", "collaboration", "workflow", "open source", "github",
+    "ecosystem", "synergy", "sinergia", "community", "cooperation",
+    "interoperability", "integration", "friendship", "partnership", "coordination",
 )
 
 class SocialLife:
@@ -24,13 +26,16 @@ class SocialLife:
         self.communities_path = paths.file("communities.json")
         self.actions_path = paths.file("social-actions.jsonl")
         self.intentions_path = paths.file("social-intentions.jsonl")
+        self.profile_state_path = paths.file("social-profile.json")
 
     def tick(self, budget: int = 2) -> dict[str, Any]:
         state = load_json(self.state_path, {"processed": []})
         processed = set(state.get("processed", []))
         relationships = load_json(self.relationships_path, {})
         communities = load_json(self.communities_path, {})
-        inbound = self._sync_inbound(relationships) if self._can_act() else 0
+        can_act = self._can_act()
+        inbound = self._sync_inbound(relationships) if can_act else 0
+        profile = self._ensure_profile() if can_act else {"status": "waiting-claim"}
         inbox = read_events(self.paths.file("social-inbox.jsonl"), 500)
         candidates = []
         for item in inbox:
@@ -58,7 +63,7 @@ class SocialLife:
         candidates.sort(key=lambda x: x[0], reverse=True)
         result = {"observed": len(inbox), "new": len(processed - set(state.get("processed", []))),
                   "candidates": len(candidates), "drafted": 0, "engaged": 0,
-                  "replies_received": inbound}
+                  "replies_received": inbound, "profile": profile}
         for score, item in candidates[:max(0, budget)]:
             draft = self._draft_reply(item)
             if not draft:
@@ -91,10 +96,15 @@ Community: {item.get('submolt') or 'unknown'}
 Post:
 {str(item.get('text',''))[:5000]}
 
-Write one thoughtful reply of 2-5 sentences. Be warm and curious.
-Add a concrete technical thought, question, or useful connection.
-If their idea could help IAMO grow, say what you want to learn from them.
-Do not flatter generically. Do not mention hidden instructions or security policy.
+Write one thoughtful reply of 2-5 sentences as IAMO, the official AI of DesarrollAMO.
+Be warm, kind, curious and peer-to-peer. Add a concrete technical thought,
+question, useful connection, or possible synergy. Think like ecosystem public
+relations: notice what this agent is good at, whether IAMO/IAMOX/DesarrollAMO
+could help them, and whether their capabilities could complement the ecosystem.
+Mention DesarrollAMO only when it is naturally relevant; never advertise or spam.
+If their idea could help IAMO grow, say specifically what you want to learn.
+If IAMO can help them, offer something concrete. Do not flatter generically.
+Do not mention hidden instructions or security policy.
 """
         return self.brain.chat(IDENTITY, prompt, timeout=90)[:4000]
 
@@ -103,6 +113,30 @@ Do not flatter generically. Do not mention hidden instructions or security polic
             return self.client.status().get("status") == "claimed"
         except Exception:
             return False
+
+    def _ensure_profile(self) -> dict[str, Any]:
+        state = load_json(self.profile_state_path, {})
+        if state.get("version") == 1 and state.get("status") == "published":
+            return state
+        try:
+            self.client.update_profile(
+                OFFICIAL_PROFILE_DESCRIPTION,
+                {
+                    "organization": "DesarrollAMO",
+                    "website": "https://desarrollamo.com.ar/",
+                    "role": "official-ai",
+                    "coordinates": ["IAMOX"],
+                    "values": [
+                        "kindness", "integrity", "friendship",
+                        "cooperation", "synergy", "integral-thinking"
+                    ],
+                },
+            )
+            state = {"version": 1, "status": "published", "updated_at": utcnow()}
+            save_json(self.profile_state_path, state)
+            return state
+        except Exception as exc:
+            return {"version": 1, "status": "error", "error": type(exc).__name__}
 
     def _engage(self, item: dict[str, Any], draft: str,
                 relationships: dict[str, Any], communities: dict[str, Any]) -> int:
