@@ -21,6 +21,12 @@ def build_parser() -> argparse.ArgumentParser:
     socialize = sub.add_parser("socialize")
     socialize.add_argument("--budget", type=int, default=3)
     sub.add_parser("grow")
+    sub.add_parser("synergies")
+    sub.add_parser("synergy-auto")
+    result = sub.add_parser("synergy-result")
+    result.add_argument("synergy_id")
+    result.add_argument("outcome", choices=["success", "fail"])
+    result.add_argument("--note", default="")
     return parser
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,4 +60,21 @@ def main(argv: list[str] | None = None) -> int:
             "code_draft": app.code_lab.draft_once(),
         }
         print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == "synergies":
+        print(json.dumps({
+            "discover": app.synergy.discover(),
+            "summary": app.synergy.summary(),
+        }, ensure_ascii=False, indent=2))
+    elif args.command == "synergy-auto":
+        print(json.dumps(app.synergy.queue_best(), ensure_ascii=False, indent=2))
+    elif args.command == "synergy-result":
+        print(json.dumps(
+            app.synergy.record_result(
+                args.synergy_id,
+                args.outcome == "success",
+                args.note,
+            ),
+            ensure_ascii=False,
+            indent=2,
+        ))
     return 0
