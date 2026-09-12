@@ -3,10 +3,15 @@ import os
 import signal
 import time
 from typing import Any
+from .brain import OllamaBrain
+from .code_lab import CodeLab
+from .friendships import Friendships
+from .growth import GrowthLab
 from .iamox import IAMOXBridge
 from .improvement import SelfImprover
 from .memory import RuntimePaths, append_event, load_json, save_json, utcnow
 from .social import MoltbookClient
+from .social_life import SocialLife
 
 class IAMO:
     """Root operational agent for DesarrollAMO.
@@ -22,6 +27,11 @@ class IAMO:
         self.social = social or MoltbookClient(self.paths)
         self.iamox = iamox or IAMOXBridge(self.paths)
         self.improver = SelfImprover(self.paths)
+        self.brain = OllamaBrain()
+        self.social_life = SocialLife(self.paths, self.social, self.brain)
+        self.growth = GrowthLab(self.paths, self.brain)
+        self.code_lab = CodeLab(self.paths, self.brain)
+        self.friendships = Friendships(self.paths)
         self.state_path = self.paths.file("life.json")
         self.events_path = self.paths.file("life-events.jsonl")
 
@@ -38,11 +48,22 @@ class IAMO:
         state = self.state()
         beat = int(state.get("beats", 0)) + 1
         policy = self.improver.policy()
-        observations: dict[str, Any] = {"iamox": self.iamox.snapshot()}
+        observations: dict[str, Any] = {}
         try:
             observations["social"] = self.social.heartbeat(policy["social_read_limit"])
         except Exception as exc:
             observations["social"] = {"status": "error", "error": type(exc).__name__}
+        observations["social_life"] = {"status": "worker-separated"}
+        observations["brain"] = {
+            "available": self.brain.available(),
+            "social_model": self.brain.social_model,
+            "coder_model": self.brain.coder_model,
+        }
+        observations["relationships"] = self.friendships.summary()
+        observations["communities"] = load_json(self.paths.file("communities.json"), {})
+        observations["growth"] = {"status": "worker-separated"}
+        observations["iamox"] = self.iamox.snapshot()
+        observations["secondary_sensors"] = self.iamox.service_sensors()
         improvement = None
         every = max(1, int(os.environ.get("IAMO_IMPROVE_EVERY", "6")))
         if beat % every == 0:
