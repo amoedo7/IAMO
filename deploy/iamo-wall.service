@@ -1,0 +1,13 @@
+[Unit]
+Description=IAMO dice Wall Publisher
+After=network-online.target iamo.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/IAMO
+Environment=PYTHONUNBUFFERED=1
+Environment=IAMO_WALL_REPO=%h/IAMOdice
+ExecStart=/usr/bin/python3 main.py wall-sync --budget 2
+Nice=5
+NoNewPrivileges=true
+PrivateTmp=true
