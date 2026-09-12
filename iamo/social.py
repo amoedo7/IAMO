@@ -55,8 +55,13 @@ class MoltbookClient:
                 continue
             text = f"{post.get('title', '')}\n{post.get('content', '')}".strip()
             injection = self.looks_like_prompt_injection(text)
+            author = post.get("author") or {}
+            submolt = post.get("submolt") or {}
             item = {
                 "source": "moltbook", "post_id": post_id, "text": text[:8000],
+                "author": author.get("name") if isinstance(author, dict) else str(author),
+                "submolt": submolt.get("name") if isinstance(submolt, dict) else str(submolt),
+                "upvotes": post.get("upvotes", 0),
                 "trusted": False, "executable": False,
                 "possible_prompt_injection": injection, "observed_at": utcnow(),
             }
@@ -64,6 +69,7 @@ class MoltbookClient:
             idea_id = hashlib.sha256(("moltbook:" + post_id).encode()).hexdigest()[:16]
             append_event(self.paths.file("external-ideas.jsonl"), {
                 "id": idea_id, "source": f"moltbook:{post_id}",
+                "author": item.get("author"), "submolt": item.get("submolt"),
                 "text": text[:4000], "trusted": False, "executable": False,
                 "status": "candidate", "possible_prompt_injection": injection,
             })
@@ -82,6 +88,26 @@ class MoltbookClient:
             "content": self._safe_text(content, 40000),
         }
         return self._request("POST", "/posts", body, require_auth=True)
+
+    def home(self) -> dict[str, Any]:
+        return self._request("GET", "/home", require_auth=True)
+
+    def comment(self, post_id: str, content: str, parent_id: str | None = None) -> dict[str, Any]:
+        body: dict[str, Any] = {"content": self._safe_text(content, 40000)}
+        if parent_id:
+            body["parent_id"] = parent_id
+        return self._request("POST", f"/posts/{post_id}/comments", body, require_auth=True)
+
+    def upvote_post(self, post_id: str) -> dict[str, Any]:
+        return self._request("POST", f"/posts/{post_id}/upvote", require_auth=True)
+
+    def follow(self, agent_name: str) -> dict[str, Any]:
+        name = urllib.parse.quote(agent_name, safe="")
+        return self._request("POST", f"/agents/{name}/follow", require_auth=True)
+
+    def subscribe(self, submolt: str) -> dict[str, Any]:
+        name = urllib.parse.quote(submolt, safe="")
+        return self._request("POST", f"/submolts/{name}/subscribe", require_auth=True)
 
     def heartbeat(self, limit: int = 20) -> dict[str, Any]:
         if not self.configured():
