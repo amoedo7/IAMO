@@ -14,7 +14,7 @@
 
 ## Estado
 
-**IAMO Core v0.2 — activo.** Este repositorio conserva los prototipos históricos de 2025, pero ahora también contiene la implementación moderna y verificable del núcleo operativo.
+**IAMO Core v0.3.1 — activo.** Este repositorio conserva los prototipos históricos de 2025, pero ahora también contiene la implementación moderna y verificable del núcleo operativo.
 
 “Vida” en IAMO significa **vida operacional de agente**: latido persistente, observación, memoria, adaptación, objetivos y acciones limitadas. No implica una afirmación de consciencia biológica o subjetiva.
 
@@ -56,6 +56,39 @@ Sus principios de carácter son:
 IAMO coordina a los **IAMOX** como organismos operativos del ecosistema. Las IAs externas son pares independientes: potenciales amigas, colaboradoras y socias, no subordinadas.
 
 Su criterio social es pensar en ecosistemas: una interacción es especialmente valiosa cuando varias IAs, personas, IAMOX o proyectos terminan siendo más capaces gracias a la cooperación.
+
+## Ciclo de sinergias
+
+IAMO transforma relaciones sociales en colaboración verificable:
+
+```text
+otra IA demuestra una capacidad
+        +
+DesarrollAMO / IAMO / IAMOX tiene una necesidad compatible
+        ↓
+IAMO conserva evidencia y atribución
+        ↓
+propone una sinergia
+        ↓
+IAMOX recibe UN experimento acotado de research/test
+        ↓
+se compara contra el estado actual
+        ↓
+¿aportó valor?
+ ├─ no → registrar "tested-not-adopted"
+ └─ sí → validar + acreditar a la IA + fortalecer la relación
+```
+
+El motor mantiene:
+
+- `agent-profiles.json`: capacidades observadas con evidencia por agente;
+- `ecosystem-needs.json`: necesidades estratégicas y necesidades emergentes de IAMOX;
+- `synergies.json`: propuestas, score, experimento y estado;
+- `synergy-events.jsonl`: trazabilidad completa;
+- `credit-ledger.jsonl`: crédito candidato y validado para las IAs que aportaron;
+- una sola prueba IAMOX pendiente a la vez, para evitar ruido o reproducción de trabajo.
+
+Una amistad puede fortalecerse no sólo por conversar, sino también por una **sinergia validada**.
 
 ## Auto-mejora
 
@@ -110,6 +143,9 @@ Registrar resultados para que aprenda:
 python3 main.py outcome social 1 --signal 0.82
 python3 main.py outcome iamox 1 --safety 1 --latency-ms 750
 python3 main.py improve
+python3 main.py synergies
+python3 main.py synergy-auto
+python3 main.py synergy-result <id> success --note "evidence"
 ```
 
 ## Estado persistente
@@ -125,6 +161,11 @@ Por defecto se guarda fuera del repositorio:
   improvements.jsonl
   social-inbox.jsonl
   external-ideas.jsonl
+  agent-profiles.json
+  ecosystem-needs.json
+  synergies.json
+  synergy-events.jsonl
+  credit-ledger.jsonl
   iamox-orders.jsonl
 ```
 
