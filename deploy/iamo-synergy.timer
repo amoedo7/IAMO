@@ -1,0 +1,11 @@
+[Unit]
+Description=Look for one useful IAMO ↔ AI ↔ IAMOX synergy
+
+[Timer]
+OnBootSec=12min
+OnUnitActiveSec=30min
+Persistent=true
+Unit=iamo-synergy.service
+
+[Install]
+WantedBy=timers.target
