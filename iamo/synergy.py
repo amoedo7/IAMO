@@ -177,6 +177,15 @@ class SynergyEngine:
 
     def queue_best(self, min_score: float = 0.62) -> dict[str, Any]:
         result = self.discover()
+        current = load_json(self.synergies_path, {})
+        pending = [x for x in current.values() if x.get("status") == "queued-iamox"]
+        if pending:
+            pending.sort(key=lambda x: str(x.get("queued_at", "")))
+            return {
+                "status": "waiting",
+                "reason": "an IAMOX synergy experiment is already pending",
+                "pending": pending[0],
+            }
         candidates = [
             x for x in result["top"]
             if x.get("status") == "proposed" and float(x.get("score", 0)) >= min_score
