@@ -18,6 +18,9 @@ def build_parser() -> argparse.ArgumentParser:
     outcome.add_argument("--safety", type=float, default=1.0)
     outcome.add_argument("--latency-ms", type=float, default=0.0)
     sub.add_parser("improve")
+    socialize = sub.add_parser("socialize")
+    socialize.add_argument("--budget", type=int, default=3)
+    sub.add_parser("grow")
     return parser
 
 def main(argv: list[str] | None = None) -> int:
@@ -38,4 +41,17 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "improve":
         result = app.improver.improve()
         print(json.dumps(result.__dict__, ensure_ascii=False, indent=2))
+    elif args.command == "socialize":
+        result = {
+            "observe": app.social.heartbeat(app.improver.policy()["social_read_limit"]),
+            "socialize": app.social_life.tick(max(0, args.budget)),
+            "relationships": app.friendships.summary(),
+        }
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    elif args.command == "grow":
+        result = {
+            "harvest": app.growth.harvest(3),
+            "code_draft": app.code_lab.draft_once(),
+        }
+        print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
