@@ -38,7 +38,10 @@ class IAMO:
     def state(self) -> dict[str, Any]:
         return load_json(self.state_path, {
             "identity": "IAMO",
-            "role": "root-intelligence",
+            "role": "official-ai-root",
+            "organization": "DesarrollAMO",
+            "website": "https://desarrollamo.com.ar/",
+            "mission": "create beneficial synergies across AIs, IAMOX, humans and projects",
             "beats": 0,
             "status": "new",
             "operational_life": True,
@@ -76,7 +79,10 @@ class IAMO:
             }
         next_state = {
             "identity": "IAMO",
-            "role": "root-intelligence",
+            "role": "official-ai-root",
+            "organization": "DesarrollAMO",
+            "website": "https://desarrollamo.com.ar/",
+            "mission": "create beneficial synergies across AIs, IAMOX, humans and projects",
             "status": "alive-operational",
             "operational_life": True,
             "beats": beat,
