@@ -1,2 +1,2 @@
-"""IAMO Core — root operational agent for DesarrollAMO."""
-__version__ = "0.2.0"
+"""IAMO Core — official AI and root coordinating intelligence of DesarrollAMO."""
+__version__ = "0.3.0"
