@@ -1,0 +1,11 @@
+[Unit]
+Description=Run IAMO Social Life regularly
+
+[Timer]
+OnActiveSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+Unit=iamo-social.service
+
+[Install]
+WantedBy=timers.target
