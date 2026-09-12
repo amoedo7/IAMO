@@ -17,13 +17,25 @@ class IAMOXBridge:
     def snapshot(self) -> dict[str, Any]:
         state = self.root / "state"
         result: dict[str, Any] = {"available": self.root.exists(), "root": str(self.root)}
-        for name in ("metabolism", "cells", "organs", "goals", "emergent_needs", "btcars"):
+        for name in ("metabolism", "cells", "organs", "goals", "emergent_needs"):
             path = state / f"{name}.json"
             try:
                 result[name] = json.loads(path.read_text(encoding="utf-8"))
             except (FileNotFoundError, json.JSONDecodeError, OSError):
                 result[name] = None
         return result
+
+    def service_sensors(self) -> dict[str, Any]:
+        """Secondary service telemetry, intentionally outside IAMO's main identity."""
+        state = self.root / "state"
+        out: dict[str, Any] = {}
+        for name in ("btcars",):
+            path = state / f"{name}.json"
+            try:
+                out[name] = json.loads(path.read_text(encoding="utf-8"))
+            except (FileNotFoundError, json.JSONDecodeError, OSError):
+                out[name] = None
+        return out
 
     def queue(self, capability: str, objective: str,
               payload: dict[str, Any] | None = None) -> dict[str, Any]:
