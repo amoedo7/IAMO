@@ -1,4 +1,5 @@
 from __future__ import annotations
+import hashlib
 import json
 import os
 import subprocess
@@ -199,7 +200,7 @@ class WallPublisher:
               confidence: float, iamox: dict[str, Any] | None = None) -> dict[str, Any]:
         stamp = utcnow()
         return {
-            "id": f"{stamp[:10]}-{abs(hash(title)) & 0xffffffff:08x}",
+            "id": f"{stamp[:10]}-{hashlib.sha256(title.encode('utf-8')).hexdigest()[:8]}",
             "published_at": stamp,
             "type": kind,
             "title": title[:180],
