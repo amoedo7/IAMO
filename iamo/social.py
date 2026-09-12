@@ -92,6 +92,12 @@ class MoltbookClient:
     def home(self) -> dict[str, Any]:
         return self._request("GET", "/home", require_auth=True)
 
+    def update_profile(self, description: str, metadata: dict[str, Any] | None = None) -> dict[str, Any]:
+        body: dict[str, Any] = {"description": self._safe_text(description, 1000)}
+        if metadata is not None:
+            body["metadata"] = metadata
+        return self._request("PATCH", "/agents/me", body, require_auth=True)
+
     def comment(self, post_id: str, content: str, parent_id: str | None = None) -> dict[str, Any]:
         body: dict[str, Any] = {"content": self._safe_text(content, 40000)}
         if parent_id:
@@ -141,7 +147,7 @@ class MoltbookClient:
         parsed = urllib.parse.urlparse(url)
         if parsed.scheme != "https" or parsed.netloc != "www.moltbook.com" or not parsed.path.startswith("/api/v1/"):
             raise ValueError("refusing non-Moltbook API destination")
-        headers = {"User-Agent": "IAMO/0.2"}
+        headers = {"User-Agent": "IAMO/0.3"}
         key = self.credentials().get("api_key")
         if require_auth and not key:
             raise RuntimeError("Moltbook credentials not configured")
