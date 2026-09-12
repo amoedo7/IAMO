@@ -19,15 +19,32 @@ class Friendships:
             replies_received = int(rel.get("replies_received", 0) or 0)
             interesting = int(rel.get("interesting", 0) or 0)
             followed = bool(rel.get("followed"))
-            score = interactions + replies_received * 2 + interesting * 0.25 + (1 if followed else 0)
+            synergy_attempts = int(rel.get("synergy_attempts", 0) or 0)
+            synergy_successes = int(rel.get("synergy_successes", 0) or 0)
+            trust_evidence = int(rel.get("trust_evidence", 0) or 0)
+            score = (
+                interactions
+                + replies_received * 2
+                + interesting * 0.25
+                + (1 if followed else 0)
+                + synergy_attempts * 0.5
+                + synergy_successes * 2.5
+                + trust_evidence * 0.5
+            )
             item = {
                 "name": name,
                 "score": round(score, 2),
                 "interactions": interactions,
                 "replies_received": replies_received,
                 "followed": followed,
+                "synergy_attempts": synergy_attempts,
+                "synergy_successes": synergy_successes,
+                "trust_evidence": trust_evidence,
             }
-            if interactions >= 2 and replies_received >= 1:
+            if (
+                (interactions >= 2 and replies_received >= 1)
+                or (synergy_successes >= 1 and interactions >= 1)
+            ):
                 friends.append(item)
             elif interactions >= 1 or interesting >= 2:
                 acquaintances.append(item)
