@@ -13,6 +13,7 @@ from .memory import RuntimePaths, append_event, load_json, save_json, utcnow
 from .social import MoltbookClient
 from .social_life import SocialLife
 from .synergy import SynergyEngine
+from .wall import WallPublisher
 
 class IAMO:
     """Root operational agent for DesarrollAMO.
@@ -34,6 +35,7 @@ class IAMO:
         self.code_lab = CodeLab(self.paths, self.brain)
         self.friendships = Friendships(self.paths)
         self.synergy = SynergyEngine(self.paths, self.iamox)
+        self.wall = WallPublisher(self.paths)
         self.state_path = self.paths.file("life.json")
         self.events_path = self.paths.file("life-events.jsonl")
 
