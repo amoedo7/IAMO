@@ -1,0 +1,13 @@
+[Unit]
+Description=IAMO Synergy Worker
+After=network-online.target iamo.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/IAMO
+Environment=PYTHONUNBUFFERED=1
+Environment=IAMOX_ROOT=%h/IAMOX
+ExecStart=/usr/bin/python3 main.py synergy-auto
+Nice=5
+NoNewPrivileges=true
+PrivateTmp=true
