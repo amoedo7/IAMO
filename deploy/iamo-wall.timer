@@ -1,0 +1,11 @@
+[Unit]
+Description=Publish factual IAMO milestones to IAMO dice
+
+[Timer]
+OnBootSec=8min
+OnUnitActiveSec=15min
+Persistent=true
+Unit=iamo-wall.service
+
+[Install]
+WantedBy=timers.target
