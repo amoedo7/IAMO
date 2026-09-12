@@ -1,0 +1,15 @@
+[Unit]
+Description=IAMO Moltbook Onboarding
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/IAMO
+ExecStart=/usr/bin/python3 tools/moltbook_onboard.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target
