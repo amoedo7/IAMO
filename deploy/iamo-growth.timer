@@ -1,0 +1,11 @@
+[Unit]
+Description=Run IAMO Growth Lab periodically
+
+[Timer]
+OnActiveSec=20min
+OnUnitActiveSec=60min
+Persistent=true
+Unit=iamo-growth.service
+
+[Install]
+WantedBy=timers.target
