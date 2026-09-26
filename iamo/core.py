@@ -61,10 +61,12 @@ class IAMO:
         except Exception as exc:
             observations["social"] = {"status": "error", "error": type(exc).__name__}
         observations["social_life"] = {"status": "worker-separated"}
+        social_brain = self.brain.model_status()
+        coder_brain = self.brain.model_status(coder=True)
         observations["brain"] = {
-            "available": self.brain.available(),
-            "social_model": self.brain.social_model,
-            "coder_model": self.brain.coder_model,
+            "available": bool(social_brain.get("selected")),
+            "social": social_brain,
+            "coder": coder_brain,
         }
         observations["relationships"] = self.friendships.summary()
         observations["synergies"] = self.synergy.summary()
@@ -119,3 +121,4 @@ class IAMO:
             end = time.monotonic() + remaining
             while not stop and time.monotonic() < end:
                 time.sleep(min(1.0, end - time.monotonic()))
+

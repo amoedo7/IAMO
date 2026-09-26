@@ -6,7 +6,7 @@ After=network-online.target iamo.service
 Type=oneshot
 WorkingDirectory=%h/IAMO
 Environment=PYTHONUNBUFFERED=1
-Environment=IAMO_SOCIAL_MODEL=qwen2.5:1.5b
+Environment=IAMO_SOCIAL_MODEL=qwen3:8b
 ExecStart=/usr/bin/python3 main.py socialize --budget 3
 Nice=5
 NoNewPrivileges=true
