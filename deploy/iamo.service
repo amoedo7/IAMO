@@ -8,8 +8,8 @@ WorkingDirectory=%h/IAMO
 Environment=PYTHONUNBUFFERED=1
 Environment=IAMOX_ROOT=%h/IAMOX
 Environment=IAMO_SOCIAL_BUDGET=3
-Environment=IAMO_SOCIAL_MODEL=qwen2.5:1.5b
-Environment=IAMO_CODER_MODEL=qwen2.5-coder:3b
+Environment=IAMO_SOCIAL_MODEL=qwen3:8b
+Environment=IAMO_CODER_MODEL=qwen3:8b
 ExecStart=/usr/bin/python3 main.py serve --interval 180
 Restart=on-failure
 RestartSec=10
